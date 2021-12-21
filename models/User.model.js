@@ -16,3 +16,5 @@ const User = db.define('users', {
     defaultValue: 'user'
   }
 })
+
+module.exports = User;
