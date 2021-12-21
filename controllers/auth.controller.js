@@ -1,5 +1,4 @@
 const passport = require('passport');
-const User = require('../models/User.model');
 
 module.exports.login = (req, res) => {
 
@@ -29,4 +28,10 @@ module.exports.login = (req, res) => {
       res.status(201).json(theUser);
     });
   })(req, res);
+}
+
+module.exports.logout = (req, res) => {
+  let user = req.user;
+  req.logout();
+  res.status(200).json({ message: `${user.email} deconnected`, user: false });
 }
