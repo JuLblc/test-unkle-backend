@@ -3,6 +3,7 @@ require('dotenv').config();
 const pgtools = require('pgtools');
 const db = require('../configs/db.config');
 const User = require('../models/User.model');
+const Option = require('../models/Option.model');
 
 const config = {
   user: process.env.PGUSER,
@@ -10,6 +11,16 @@ const config = {
   port: process.env.PGPORT,
   host: process.env.PGHOST
 }
+
+const options = [
+  'Incendie',
+  'Inondation',
+  'Seisme',
+  'Tornade',
+  'Tsunamie'
+]
+
+const optionPromises = [];
 
 pgtools.createdb(config, process.env.PGDATABASE, function (err, res) {
   if (err) {
@@ -22,17 +33,28 @@ pgtools.createdb(config, process.env.PGDATABASE, function (err, res) {
       .then(() => {
         console.log('DB initialized');
 
-        User.findOrCreate({
-          where: {
-            password: 'admin',
-            email: 'admin@admin.fr',
-            role: 'admin',
-          }
+        // Create admin user
+        User.create({
+          password: 'admin',
+          email: 'admin@admin.fr',
+          role: 'admin',
         })
-        .then(()=>{
-          console.log('Admin created')
-          db.close();
-        })
+          .then(() => {
+            console.log('Admin created')
+            //Create options for contracts
+            options.forEach(option => optionPromises.push(
+              Option.create({
+                description: option
+              })
+            ))
+
+            Promise.allSettled(optionPromises)
+              .then(() => {
+                console.log('Options created')
+                db.close();
+              })
+              .catch()
+          })
       })
       .catch(err => console.log(err));
   }
