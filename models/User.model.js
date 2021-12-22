@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../configs/db.config');
+const UserContract = require('../models/UserContract.model');
 const Contract = require('./Contract.model');
 
 const User = db.define('users', {
@@ -18,7 +19,7 @@ const User = db.define('users', {
   }
 })
 
-User.belongsToMany(Contract, {through: "user_contract"});
-Contract.belongsToMany(User, {through: "user_contract"});
+User.belongsToMany(Contract, {through: "UserContract", foreignKey:"userId", onDelete: "CASCADE"});
+Contract.belongsToMany(User, {through: "UserContract", foreignKey:"contractId", onDelete: "CASCADE"});
 
 module.exports = User;
