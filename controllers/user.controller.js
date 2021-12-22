@@ -1,4 +1,3 @@
-const passport = require('passport');
 const User = require('../models/User.model');
 
 module.exports.createUser = (req, res) => {

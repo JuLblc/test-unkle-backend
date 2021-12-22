@@ -18,16 +18,7 @@ const User = db.define('users', {
   }
 })
 
-User.belongsToMany(Contract, {
-  through: "user_contract",
-  as: "contracts",
-  foreignKey: "user_id",
-});
-
-Contract.belongsToMany(User, {
-  through: "user_contract",
-  as: "users",
-  foreignKey: "contract_id",
-});
+User.belongsToMany(Contract, {through: "user_contract"});
+Contract.belongsToMany(User, {through: "user_contract"});
 
 module.exports = User;

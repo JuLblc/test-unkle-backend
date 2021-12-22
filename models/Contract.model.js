@@ -17,6 +17,7 @@ const Contract = db.define('contracts', {
   }
 })
 
-Option.hasMany(Contract);
+Contract.belongsToMany(Option, {through: "contract_option"});
+Option.belongsToMany(Contract, {through: "contract_option"});
 
 module.exports = Contract;

@@ -37,4 +37,7 @@ app.use('/', authRoutes)
 const userRoutes = require('./routes/user.routes');
 app.use('/', userRoutes)
 
+const contractRoutes = require('./routes/contract.routes');
+app.use('/', contractRoutes)
+
 module.exports = app;

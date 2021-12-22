@@ -53,7 +53,7 @@ pgtools.createdb(config, process.env.PGDATABASE, function (err, res) {
                 console.log('Options created')
                 db.close();
               })
-              .catch()
+              .catch(err => console.log(err))
           })
       })
       .catch(err => console.log(err));
