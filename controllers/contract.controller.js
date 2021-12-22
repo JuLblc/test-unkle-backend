@@ -4,6 +4,7 @@ const User = require('../models/User.model');
 const Contract = require('../models/Contract.model');
 const Option = require('../models/Option.model');
 const UserContract = require('../models/UserContract.model');
+const contractRoutes = require('../routes/contract.routes');
 
 module.exports.createContract = (req, res) => {
 
@@ -184,4 +185,71 @@ module.exports.updateContract = async (req, res) => {
     .catch(err => {
       res.status(400).json({ message: "Une erreur lors de la modification du contrat s'est produite." });
     })
+}
+
+module.exports.getAllContracts = (req, res) => {
+
+  Contract.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ["id", "email"],
+        through: {
+          attributes: ["status", "endingDate"],
+        },
+      },
+      {
+        model: Option,
+        attributes: ["id", "description"],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  })
+    .then(foundContracts => {
+      res.status(200).json(foundContracts)
+    })
+    .catch(err => {
+      res.status(400).json({ message: "Une erreur lors de la récupération des données contrats s'est produite." });
+    });
+}
+
+module.exports.getContracts = (req, res) => {
+
+  const userId = req.user.id;
+
+  Contract.findAll({
+    include: [
+      {
+        model: User,
+        attributes: ["id", "email"],
+        through: {
+          attributes: ["status", "endingDate"],
+        },
+      },
+      {
+        model: Option,
+        attributes: ["id", "description"],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  })
+    .then(foundContracts => {
+      // 1. Keeping only the loggedin user
+      for (let i = 0; i < foundContracts.length; i++) {
+        let users = foundContracts[i].users.filter(user => user.id === userId)
+        foundContracts[i].dataValues.users = users;
+      }
+
+      // 2. Keeping only the contract with this user
+      foundContracts = foundContracts.filter(contrat => contrat.dataValues.users.length > 0);
+      res.status(200).json(foundContracts)
+    })
+    .catch(err => {
+      res.status(400).json({ message: "Une erreur lors de la récupération des données contrats s'est produite." });
+    });
+
 }
